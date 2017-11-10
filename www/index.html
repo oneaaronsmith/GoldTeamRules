@@ -36,22 +36,36 @@
     <script src="cordova.js"></script>
   </head>
   <body ng-app="app" ng-controller="AssignmentsCtrl as vm">
-    <ion-side-menus>$
+    <ion-side-menus>
         <!-- Center content -->
         <ion-side-menu-content>
-          <ion-header-bar class="bar-dark">
+          <ion-header-bar class="bar-light">
             <button class="button button-icon" ng-click="vm.toggleProjects()">
                 <i class="icon ion-navicon"></i>
               </button>
-              <h1 class="title">{{vm.activeProject.title}}</h1>
+              <h1 class="title">{{vm.activeProject.title ? vm.activeProject.title : vm.noClassMessage}}</h1>
             <button class="button button-icon" ng-click="vm.newTask()">
               <i class="icon ion-compose"></i>
             </button>
           </ion-header-bar>
           <ion-content scroll="false">
             <ion-list>
-              <ion-item ng-repeat="task in vm.activeProject.tasks">
-                {{task.title}}
+              <ion-item class="card item item-text-wrap" ng-repeat="task in vm.activeProject.tasks track by $index" ng-class="{'complete': task.complete}">
+                <div class="row">
+                  <div class="col col-80"><b>{{task.title}}</b></div>
+                </div>
+                <div class="row">
+                  <div class="col col-80">{{task.due ? task.due : 'No date'}}</div>
+                </div>
+                <div class="row">
+                  <div class="col">{{task.description}}</div>
+                </div>
+                <div class="row">
+                  <div class="button-bar">
+                    <button class="button button-clear button-small button-positive" ng-click="task.complete = !task.complete ; vm.updateProjects();">{{task.complete === true ? 'Reverse Decision' : 'Mark Completed'}}</button>
+                    <button class="button button-clear button-small button-assertive" ng-click="vm.activeProject.tasks.splice($index,1); vm.updateProjects()">Remove</button> 
+                  </div>
+                </div>
               </ion-item>
             </ion-list>
           </ion-content>
@@ -59,15 +73,17 @@
     
         <!-- Left menu -->
         <ion-side-menu side="left">
-          <ion-header-bar class="bar-dark">
+          <ion-header-bar class="bar-positive">
             <h1 class="title">Classes</h1>
             <button class="button button-icon ion-plus" ng-click="vm.newProject()">
             </button>
           </ion-header-bar>
           <ion-content scroll="false">
             <ion-list>
-              <ion-item ng-repeat="project in vm.projects" ng-click="vm.selectProject(project, $index)" ng-class="{active: activeProject == project}">
+              <ion-item class="item item-button-right" ng-repeat="project in vm.projects" ng-click="vm.selectProject(project, $index)" ng-class="{active: activeProject == project}">
                 {{project.title}}
+                <button class="button button-clear button-assertive button-icon ion-close" ng-click="vm.projects.splice($index,1); vm.updateProjects(); vm.activeProject = null;">
+                </button>
               </ion-item>
             </ion-list>
           </ion-content>
@@ -88,11 +104,17 @@
               <form ng-submit="vm.createTask(vm.task)">
                 <div class="list">
                   <label class="item item-input">
-                    <input type="text" placeholder="What do you need to do?" ng-model="vm.task.title">
+                    <input type="text" placeholder="Assignment Title" ng-model="vm.task.title">
+                  </label>
+                  <label class="item item-input">
+                    <input type="text" placeholder="Due Date" ng-model="vm.task.due">
+                  </label>
+                  <label class="item item-input item-text-wrap">
+                    <input type="text" placeholder="Description" ng-model="vm.task.description">
                   </label>
                 </div>
                 <div class="padding">
-                  <button type="submit" class="button button-block button-positive">Create Task</button>
+                  <button type="submit" class="button button-block button-positive">Create Assignment</button>
                 </div>
               </form>
             </ion-content>

@@ -1,4 +1,3 @@
-
 (function() {
     'use strict';
 
@@ -9,7 +8,30 @@
     AssignmentsCtrl.$inject = ['$scope', '$ionicModal', '$timeout', 'Projects', '$ionicSideMenuDelegate'];
 
     function AssignmentsCtrl($scope, $ionicModal, $timeout, Projects, $ionicSideMenuDelegate) {
+        //Setup view model
         var vm = this;
+
+        //Important variables
+        vm.activeProject = vm.projects[Projects.getLastActiveIndex()];
+        vm.noClassMessage = "Please select a Class";
+        vm.projects = Projects.all();
+        vm.tasks = [];
+
+        //Functions
+        vm.closeNewTask = closeNewTask;
+        vm.createTask = createTask;
+        vm.newProject = newProject;
+        vm.newTask = newTask;
+        vm.selectProject = selectProject;
+        vm.toggleProjects = toggleProjects;
+        vm.updateProjects = updateProjects;
+
+        // Create and load the Modal
+        $ionicModal.fromTemplateUrl('new-task.html', function(modal) {
+            vm.taskModal = modal;
+            }, {
+            scope: $scope,
+        });
 
         // A utility function for creating a new project
         // with the given projectTitle
@@ -20,24 +42,11 @@
             vm.selectProject(newProject, vm.projects.length-1);
         }
 
-        vm.projects = Projects.all();
-        vm.activeProject = vm.projects[Projects.getLastActiveIndex()];
-        vm.tasks = [];
-
-        vm.createTask = createTask;
-        vm.newTask = newTask;
-        vm.closeNewTask = closeNewTask;
-        vm.newProject = newProject;
-        vm.selectProject = selectProject;
-        vm.toggleProjects = toggleProjects;
-
-        // Create and load the Modal
-        $ionicModal.fromTemplateUrl('new-task.html', function(modal) {
-            vm.taskModal = modal;
-            }, {
-            scope: $scope,
-        });
-
+        // Close the new task modal
+        function closeNewTask() {
+            vm.taskModal.hide();
+        };
+        
         // Called when the form is submitted
         function createTask(task) {
             if(!vm.activeProject || !task) {
@@ -45,17 +54,23 @@
             }
 
             vm.activeProject.tasks.push({
-                title: task.title
+                title: task.title,
+                due: task.due,
+                description: task.description,
+                complete: false
             });
             vm.taskModal.hide();
 
             Projects.save(vm.projects);
 
             task.title = "";
+            task.due = "";
+            task.description = "";
+            task.complete = false;
         };
 
         function newProject() {
-            var projectTitle = prompt('Project Name');
+            var projectTitle = prompt('Class Name');
             if(projectTitle) {
                 createProject(projectTitle);
             }
@@ -63,11 +78,6 @@
         // Open our new task modal
         function newTask() {
             vm.taskModal.show();
-        };
-
-        // Close the new task modal
-        function closeNewTask() {
-            vm.taskModal.hide();
         };
 
         function selectProject(project, index) {
@@ -80,7 +90,9 @@
             $ionicSideMenuDelegate.toggleLeft();
         };
 
-
+        function updateProjects() {
+            Projects.save(vm.projects);
+        };
     }
 
 })();

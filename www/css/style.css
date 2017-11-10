@@ -1,1 +1,13 @@
 /* Empty. Add your own CSS if you like */
+.complete {
+    opacity: 0.25;
+}
+
+.center {
+    text-align: center;
+}
+
+.opaque {
+    opacity: 1;
+    color: green;
+}
