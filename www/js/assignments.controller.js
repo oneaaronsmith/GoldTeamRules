@@ -11,10 +11,19 @@
         //Setup view model
         var vm = this;
 
+        // A utility function for creating a new project
+        // with the given projectTitle
+        var createProject = function(projectTitle) {
+            var newProject = Projects.newProject(projectTitle);
+            vm.projects.push(newProject);
+            Projects.save(vm.projects);
+            vm.selectProject(newProject, vm.projects.length-1);
+        }
+
         //Important variables
+        vm.projects = Projects.all();
         vm.activeProject = vm.projects[Projects.getLastActiveIndex()];
         vm.noClassMessage = "Please select a Class";
-        vm.projects = Projects.all();
         vm.tasks = [];
 
         //Functions
@@ -32,15 +41,6 @@
             }, {
             scope: $scope,
         });
-
-        // A utility function for creating a new project
-        // with the given projectTitle
-        var createProject = function(projectTitle) {
-            var newProject = Projects.newProject(projectTitle);
-            vm.projects.push(newProject);
-            Projects.save(vm.projects);
-            vm.selectProject(newProject, vm.projects.length-1);
-        }
 
         // Close the new task modal
         function closeNewTask() {
