@@ -1,0 +1,24 @@
+/* Empty. Add your own CSS if you like */
+
+.body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.complete {
+    opacity: 0.25;
+}
+
+.center {
+    text-align: center;
+}
+
+.opaque {
+    opacity: 1;
+    color: green;
+}
+
+.opener {
+    font-family: 'Oswald', sans-serif;
+    font-size: 40px;
+    padding-top: 50px;
+}
